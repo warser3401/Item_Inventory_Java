@@ -1,0 +1,35 @@
+public class InvItem {
+	private long id;
+	private String name;
+	private int quantity;
+	
+	InvItem(long id, String name, int quantity) {
+		this.id = id;
+		this.name = name;
+		this.quantity = quantity;
+	}
+	
+	long getId() {
+		return id;
+	}
+	
+	String getName() {
+		return name;
+	}
+	
+	int getQuantity() {
+		return quantity;
+	}
+	
+	void setId(long id) {
+		this.id = id;
+	}
+	
+	void setName(String name) {
+		this.name = name;
+	}
+	
+	void setQuantity(int quantity) {
+		this.quantity = quantity;
+	}
+} 
