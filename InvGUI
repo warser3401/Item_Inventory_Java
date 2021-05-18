@@ -1,0 +1,189 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+
+public class InvGUI extends JFrame implements ActionListener, Serializable {
+	private InvItem items[];
+	//private ArrayList<InvItem> items = new ArrayList<InvItem>();
+	private JPanel jpbase;
+	private JPanel jp1,jp2,jp3;
+	private JTextField jt1,jt2,jt3,jt4;
+	private JLabel jl1,jl2,jl3,jl4;
+	private JButton jb1,jb2,jb3,jb4,jb5;
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+			InvGUI ig = new InvGUI();
+		
+		
+	}
+			InvGUI(){
+			this.setSize(800,600);
+			this.setMinimumSize(new Dimension(400, 400));
+			this.setMaximumSize(new Dimension(1200, 800));
+			
+			this.setDefaultCloseOperation(InvGUI.EXIT_ON_CLOSE);
+			
+			this.jpbase = new JPanel(); this.add(jpbase);
+			jpbase.setLayout(new BoxLayout(jpbase, BoxLayout.Y_AXIS));
+			jp1 = new JPanel(); jpbase.add(jp1);
+			jl1 = new JLabel("Item ID"); jp1.add(jl1);		
+			jt1 = new JTextField(18); jp1.add(jt1);
+			
+			jl2 = new JLabel("Item Name"); jp1.add(jl2);
+			jt2 = new JTextField(18); jp1.add(jt2);
+			jl3 = new JLabel("Item Quantity"); jp1.add(jl3);		
+			jt3 = new JTextField(18); jp1.add(jt3);
+			
+			jp2 = new JPanel(); jpbase.add(jp2); 
+			jl4 = new JLabel("filepath:  "); jp2.add(jl4);
+			jt4 = new JTextField(30); jp2.add(jt4);
+			
+			jp3 = new JPanel(); jpbase.add(jp3);
+			jb1 = new JButton("Load File"); jp3.add(jb1);
+			jb2 = new JButton("Save File"); jp3.add(jb2);
+			jb3 = new JButton("Add Item"); jp3.add(jb3);
+			jb4 = new JButton("Clear Item"); jp3.add(jb4);
+			jb5 = new JButton("Display"); jp3.add(jb5);
+			
+			items = new InvItem[0];	
+			
+			jb3.addActionListener(this);
+			jb4.addActionListener(this);
+			jb5.addActionListener(this);
+			jb1.addActionListener(this);
+			jb2.addActionListener(this);
+			this.setVisible(true);
+		}
+
+			public void actionPerformed(ActionEvent e) {
+				
+				
+				if(e.getSource()==jb3) {
+					String str = jt1.getText();
+					long id = Long.parseLong(str);
+				
+					String name = jt2.getText();
+					String q = jt3.getText();
+					int quantity = Integer.parseInt(q);
+					
+					InvItem[] items2 = new InvItem[items.length+ 1];
+					
+				for (int i=0; i<items.length; i++) {
+				items2[i] = items[i];
+				}
+						items2[items.length] = new InvItem(id, name, quantity);
+						
+						items2[items.length].setId(id);
+						items2[items.length].setName(name);
+						items2[items.length].setQuantity(quantity);
+						
+							
+				
+							items=items2;
+					
+					
+					
+				
+				}   
+				
+				
+				else if(e.getSource()==jb4) {
+					String str = jt1.getText();
+					long id = Long.parseLong(str);
+			
+					InvItem[] newarr = new InvItem[items.length-1];
+					for(int i = 0; i<items.length; i++) {
+						
+					}
+					for(int i = 0; i<items.length; i++) {
+						if(items[i].getId()==id) {
+							items[i]= null;
+							for(int j=i+1; j<items.length; j++) {
+								newarr[j-1]= items[j];
+							}
+						}
+					items=newarr;
+					}
+				}
+					
+				else if(e.getSource()==jb5) {
+					for(int i=0; i<items.length; i++) {
+						//sorry figuring out the tab is too hard so ill just do new line
+						System.out.println(items[i]);
+						System.out.println(items[i].getId());
+						System.out.println(items[i].getName());
+						System.out.println(items[i].getQuantity());
+					}
+				}
+				
+				else if(e.getSource()==jb1) {
+					try {
+					File file = new File(jt4.getText());
+					FileInputStream fis = new FileInputStream(file);
+					ObjectInputStream ois = new ObjectInputStream(fis);
+					
+					if(file.exists()==true) {
+						long[] input = (long[])ois.readObject();
+						String[] input2 = (String[])ois.readObject();
+						int[] input3 = (int[])ois.readObject();
+						InvItem[] items3= new InvItem[input.length];
+						
+						for(int i=0; i<input.length;i++) {
+							items3[i]= new InvItem(i, null, i);
+					}
+						for(int i = 0; i<input.length;i++) {
+							items3[i].setId(input[i]);
+							items3[i].setName(input2[i]);
+							items3[i].setQuantity(input3[i]);
+						}
+						items=items3;
+					}
+					ois.close();
+					
+					}
+					catch(IOException ioe){
+						System.out.println("you did something wrong");
+					}
+					catch(ClassNotFoundException cnfe) {
+						System.out.println("Class not Found");
+					}
+					
+				}
+				else if(e.getSource()==jb2) {
+					try {
+					File outfile = new File(jt4.getText());
+					FileOutputStream fos = new FileOutputStream(outfile);
+					ObjectOutputStream oos = new ObjectOutputStream(fos);
+					long[] output = new long[items.length];
+					String[] output2= new String[items.length];
+					int[] output3 = new int[items.length];
+					
+					if(outfile.exists()==true) {
+						for(int i=0; i<items.length;i++) {
+							output[i]=(items[i].getId());
+							output2[i]=(items[i].getName());
+							output3[i]=(items[i].getQuantity());
+						}
+						for(int i=0; i<items.length;i++) {
+							System.out.println(output[i]);
+							System.out.println(output2[i]);
+							System.out.println(output3[i]);
+						}
+					}oos.close();
+					}
+					catch(IOException ioe){
+						System.out.println("you did something wrong");
+					}
+					
+				}
+			}
+			
+					
+			
+}
+
+
